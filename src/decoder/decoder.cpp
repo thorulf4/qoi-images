@@ -54,6 +54,7 @@ class Decoder{
 public:
     std::vector<PixelType> pixels{};
     Decoder(const Header& header){
+        last_pixel = RGB{0,0,0};
         pixels_left = header.height * header.width;
         pixels.reserve(pixels_left);
     }
