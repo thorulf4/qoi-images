@@ -8,14 +8,6 @@
 #include <array>
 #include <vector>
 
-int RGB::hash() const {
-    return (r * 3 + g * 5 + b * 7) % 64;
-}
-
-int RGBA::hash() const {
-    return (r * 3 + g * 5 + b * 7 + a*11) % 64;
-}
-
 void check_magic_bytes(uint8_t const*& data){
     if(std::memcmp(data, "qoif", 4) != 0)
         throw std::logic_error{"Magic bytes didn't match"};
