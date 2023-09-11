@@ -1,4 +1,4 @@
-#include <decoder.h>
+#include <qoi/decoder.h>
 
 #include <cstdint>
 #include <ranges>

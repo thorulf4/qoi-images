@@ -1,5 +1,13 @@
-add_library(core INTERFACE)
-target_include_directories(core INTERFACE  "${CMAKE_SOURCE_DIR}/include/qoi/core/")
+add_library(qoi encoder.cpp decoder.cpp)
+add_library(Qoi::qoi ALIAS qoi)
 
-add_subdirectory(decoder)
-add_subdirectory(encoder)
+target_sources(qoi PUBLIC
+    FILE_SET qoiPublic
+    TYPE HEADERS
+    BASE_DIRS include
+    FILES
+        include/qoi/qoi.h
+        include/qoi/encoder.h
+        include/qoi/decoder.h)
+
+install(TARGETS qoi EXPORT QoiConfig FILE_SET qoiPublic)

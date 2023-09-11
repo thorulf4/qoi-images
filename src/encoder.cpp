@@ -1,4 +1,4 @@
-#include <encoder.h>
+#include <qoi/encoder.h>
 
 namespace ranges = std::ranges;
 constexpr uint8_t OP_RUN = 192;

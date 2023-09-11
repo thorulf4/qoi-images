@@ -1,4 +1,4 @@
-#include <decoder.h>
+#include <qoi/decoder.h>
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include <doctest/doctest.h>
 

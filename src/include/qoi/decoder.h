@@ -1,5 +1,5 @@
 #pragma once
-#include <qoi.h>
+#include <qoi/qoi.h>
 
 #include <vector>
 
