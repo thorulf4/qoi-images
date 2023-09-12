@@ -13,7 +13,7 @@ TEST_CASE("Integration OP_RUN"){
 
     auto* end = encode(2,2, image_data, data.data());
 
-    Image image = decode(data.data());
+    Image image = decode(data.data(), data.end());
 
     CHECK(image.header.width == 2);
     CHECK(image.header.height == 2);
@@ -33,7 +33,7 @@ TEST_CASE("Integration OP_INDEX"){
 
     auto* end = encode(2,2, image_data, data.data());
 
-    Image image = decode(data.data());
+    Image image = decode(data.data(), data.end());
 
     CHECK(image.header.width == 2);
     CHECK(image.header.height == 2);
@@ -53,7 +53,7 @@ TEST_CASE("Integrate with OP_DIFF"){
 
     auto* end = encode(2,2, image_data, data.data());
 
-    Image image = decode(data.data());
+    Image image = decode(data.data(), data.end());
 
     CHECK(image.header.width == 2);
     CHECK(image.header.height == 2);
@@ -73,7 +73,7 @@ TEST_CASE("Integrate with OP_LUMA"){
 
     auto* end = encode(2,2, image_data, data.data());
 
-    Image image = decode(data.data());
+    Image image = decode(data.data(), data.end());
 
     CHECK(image.header.width == 2);
     CHECK(image.header.height == 2);

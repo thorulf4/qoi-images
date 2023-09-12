@@ -18,6 +18,10 @@ else(doctest_FOUND)
     USES_TERMINAL_INSTALL ON
     FIND_PACKAGE_ARGS NAMES doctest
   )
-  FetchContent_MakeAvailable(doctest)
+  FetchContent_GetProperties(doctest)
+  if(NOT doctest_POPULATED)
+    FetchContent_Populate(doctest)
+    add_subdirectory(${doctest_SOURCE_DIR} ${doctest_BINARY_DIR} EXCLUDE_FROM_ALL)
+  endif()
   message(STATUS "Got doctest.")
 endif(doctest_FOUND)

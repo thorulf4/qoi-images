@@ -8,4 +8,4 @@ struct Image{
     std::vector<RGBA> pixels;
 };
 
-Image decode(const uint8_t* data);
+Image decode(const uint8_t* data, const uint8_t* end);

@@ -29,19 +29,20 @@ template<>
 Header read<Header>(uint8_t const*& data){
     Header header{};
     check_magic_bytes(data);
-    header.width = read<uint32_t>(data);
-    header.height = read<uint32_t>(data);
+    header.width = __builtin_bswap32(read<uint32_t>(data));
+    header.height = __builtin_bswap32(read<uint32_t>(data));
     header.channels = read<ChannelType>(data);
     header.colorspace = read<ColorType>(data);
     return header;
 }
 
+#include <iostream>
 
 template<typename PixelType>
 class Decoder{
     std::array<PixelType, 64> array{};
     PixelType last_pixel{};
-    uint32_t pixels_left;
+    int64_t pixels_left;
 
 public:
     std::vector<PixelType> pixels{};
@@ -62,47 +63,45 @@ public:
         array[last_pixel.hash()] = last_pixel;
     }
 
-    void decode(const uint8_t* data){
-        for(; pixels_left > 0; --pixels_left){
-            
+    void decode(const uint8_t* data, const uint8_t* end){
+        const auto* start = data;
+        while(pixels.size() < pixels_left){
+            int pixel = pixels.size();
             uint8_t flag = *data++;
-
             if(flag == 254){ // QOI_OP_RGB
                 add_pixel(read<RGB>(data));
             }else if(flag == 255){ //QOI_OP_RGBA
                 add_pixel(read<RGBA>(data));
             }else if(flag < 64){ // QOI_OP_INDEX
-                uint8_t x = flag & 63;
-                add_pixel(array[x]);
+                add_pixel(array[flag]);
             }else if(flag < 128){ // QOI_OP_DIFF
-                last_pixel.r += ((flag & 48) >> 4) - 2;
-                last_pixel.g += ((flag & 12) >> 2) - 2;
-                last_pixel.b += (flag & 3) - 2;
+                last_pixel.r += ((flag >> 4) & 3u) - 2;
+                last_pixel.g += ((flag >> 2) & 3u) - 2;
+                last_pixel.b += ( flag       & 3u) - 2;
                 copy_pixel();
-            }else if(flag < 192){ // QOI_OP_LUMA
-                uint8_t dg = (flag & 63) - 32;
-                uint8_t luma = *data++;
-                uint8_t db_dg = (luma & 15u) - 8;
-                uint8_t dr_dg = ((luma & 240u) >> 4) - 8;
+            }else if(flag < 192){ // QOI_OP_LUMA                
+                int luma = *data++;
                 
-                last_pixel.r += dr_dg + dg;
+                int dg = (flag & 63u) - 32;
+                last_pixel.r += dg - 8 + ((luma >> 4) & 15u);
                 last_pixel.g += dg;
-                last_pixel.b += db_dg + dg;
+                last_pixel.b += dg - 8 + (luma & 15u);
                 copy_pixel();
             }else{ // QOI_OP_RUN
-                uint8_t x = flag & 63;
-                pixels_left -= (x - 1);
-                for(; x > 0; --x)
+                int32_t x = (flag & 63) + 1;
+                while(x-->0)
                     pixels.emplace_back(last_pixel);
             }
         }
+        if(std::memcmp(data, "\0\0\0\0\0\0\0\1", 8) != 0)
+            throw std::logic_error{"Input didn't contain end padding"};
     }
 };
 
-Image decode(const uint8_t* data){
+Image decode(const uint8_t* data, const uint8_t* end){
     auto header = read<Header>(data);
     Decoder<RGBA> decoder{header};
-    decoder.decode(data);
+    decoder.decode(data, end);
     return {header, std::move(decoder.pixels)};
 }
 

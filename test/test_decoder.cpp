@@ -4,7 +4,7 @@
 
 TEST_CASE("Decode header 1"){
     uint8_t file[] = { 'q', 'o', 'i', 'f', 0,0,0,0,  0,0,0,0,  4, 1};
-    Image image = decode(file);
+    Image image = decode(file, file + sizeof(file));
 
     CHECK(image.header.width == 0);
     CHECK(image.header.height == 0);
@@ -15,7 +15,7 @@ TEST_CASE("Decode header 1"){
 
 TEST_CASE("Decode header 2"){
     uint8_t file[] = { 'q', 'o', 'i', 'f', 0,0,0,0,    0,0,0,0, 3, 0};
-    Image image = decode(file);
+    Image image = decode(file, file + sizeof(file));
 
     CHECK(image.header.width == 0);
     CHECK(image.header.height == 0);
@@ -24,11 +24,11 @@ TEST_CASE("Decode header 2"){
 }
 
 TEST_CASE("Decode QOI_OP_RGB"){
-    uint8_t file[] = { 'q', 'o', 'i', 'f', 2,0,0,0,    1,0,0,0, 4, 1,
+    uint8_t file[] = { 'q', 'o', 'i', 'f', 0,0,0,2,    0,0,0,1, 4, 1,
                         254, 100, 200, 240,
                         254, 50, 100, 200};
 
-    Image image = decode(file);
+    Image image = decode(file, file + sizeof(file));
 
     CHECK(image.header.width == 2);
     CHECK(image.header.height == 1);
@@ -47,11 +47,11 @@ TEST_CASE("Decode QOI_OP_RGB"){
 }
 
 TEST_CASE("Decode QOI_OP_RGBA"){
-    uint8_t file[] = { 'q', 'o', 'i', 'f', 2,0,0,0,    1,0,0,0, 4, 1,
+    uint8_t file[] = { 'q', 'o', 'i', 'f', 0,0,0,2,    0,0,0,1, 4, 1,
                         255, 100, 200, 240, 10,
                         255, 50, 100, 200, 150};
 
-    Image image = decode(file);
+    Image image = decode(file, file + sizeof(file));
 
     CHECK(image.header.width == 2);
     CHECK(image.header.height == 1);
@@ -70,12 +70,12 @@ TEST_CASE("Decode QOI_OP_RGBA"){
 }
 
 TEST_CASE("Decode QOI_OP_INDEX"){
-    uint8_t file[] = { 'q', 'o', 'i', 'f', 3,0,0,0,    1,0,0,0, 4, 1,
+    uint8_t file[] = { 'q', 'o', 'i', 'f', 0,0,0,3,    0,0,0,1, 4, 1,
                         255, 1, 1, 1, 1,
                         255, 255, 255, 255, 255,
                         26};
 
-    Image image = decode(file);
+    Image image = decode(file, file + sizeof(file));
 
     CHECK(image.header.width == 3);
     CHECK(image.header.height == 1);
@@ -98,11 +98,11 @@ TEST_CASE("Decode QOI_OP_INDEX"){
 }
 
 TEST_CASE("Decode QOI_OP_DIFF"){
-    uint8_t file[] = { 'q', 'o', 'i', 'f', 2,0,0,0,    1,0,0,0, 4, 1,
+    uint8_t file[] = { 'q', 'o', 'i', 'f', 0,0,0,2,    0,0,0,1, 4, 1,
                         254, 100, 100, 100,
                         127};
 
-    Image image = decode(file);
+    Image image = decode(file, file + sizeof(file));
 
     CHECK(image.header.width == 2);
     CHECK(image.header.height == 1);
@@ -121,11 +121,11 @@ TEST_CASE("Decode QOI_OP_DIFF"){
 }
 
 TEST_CASE("Decode QOI_OP_LUMA"){
-    uint8_t file[] = { 'q', 'o', 'i', 'f', 2,0,0,0,    1,0,0,0, 4, 1,
+    uint8_t file[] = { 'q', 'o', 'i', 'f', 0,0,0,2,    0,0,0,1, 4, 1,
                         254, 100, 100, 100,
                         191, 255};
 
-    Image image = decode(file);
+    Image image = decode(file, file + sizeof(file));
 
     CHECK(image.header.width == 2);
     CHECK(image.header.height == 1);
@@ -144,11 +144,11 @@ TEST_CASE("Decode QOI_OP_LUMA"){
 }
 
 TEST_CASE("Decode QOI_OP_RUN"){
-    uint8_t file[] = { 'q', 'o', 'i', 'f', 2,0,0,0,    2,0,0,0, 4, 1,
+    uint8_t file[] = { 'q', 'o', 'i', 'f', 0,0,0,2,    0,0,0,2, 4, 1,
                         254, 100, 100, 100,
-                        195};
+                        194};
 
-    Image image = decode(file);
+    Image image = decode(file, file + sizeof(file));
 
     CHECK(image.header.width == 2);
     CHECK(image.header.height == 2);
