@@ -20,9 +20,10 @@ T read(uint8_t const*& data);
 template<typename T>
 requires (alignof(T) == 1 || alignof(T) == sizeof(T))
 T read(uint8_t const*& data){
-    uint8_t const* location = data;
+    T result;
+    std::memcpy(&result, data, sizeof(T));
     data += sizeof(T);
-    return *reinterpret_cast<const T*>(location);
+    return result;
 }
 
 template<>
@@ -35,8 +36,6 @@ Header read<Header>(uint8_t const*& data){
     header.colorspace = read<ColorType>(data);
     return header;
 }
-
-#include <iostream>
 
 template<typename PixelType>
 class Decoder{
