@@ -11,6 +11,8 @@
 #include <vector>
 #include <bit>
 
+namespace qoi {
+
 uint32_t read_int(auto& it){
     auto data = std::array<uint8_t, 4>{*it++,*it++,*it++,*it++};
     return __builtin_bswap32(std::bit_cast<uint32_t>(data));
@@ -76,4 +78,6 @@ template<std::ranges::range DataRange>
 requires ( std::is_same_v<uint8_t, std::ranges::range_value_t<DataRange>> )
 Image decode(const DataRange& data_range){
     return Image{data_range.begin(), data_range.end()};
+}
+
 }

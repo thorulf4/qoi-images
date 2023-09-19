@@ -4,6 +4,8 @@
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include <doctest/doctest.h>
 
+using namespace qoi;
+
 TEST_CASE("Decode header 1"){
     auto file = std::to_array<uint8_t>({ 'q', 'o', 'i', 'f', 0,0,0,0,  0,0,0,0,  4, 1});
     Image image = decode(file);

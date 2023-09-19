@@ -3,6 +3,8 @@
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include <doctest/doctest.h>
 
+using namespace qoi;
+
 TEST_CASE("Integration OP_RUN"){
     std::vector<uint8_t> data;
 

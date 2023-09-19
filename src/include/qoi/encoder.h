@@ -8,6 +8,8 @@
 #include <ranges>
 #include <iterator>
 
+namespace qoi{
+
 template<typename OutputIterator>
 void write_repeat(OutputIterator& it, uint32_t times){
     while(times > 62){
@@ -96,4 +98,6 @@ void encode(const Header& header, const PixelRange& pixels, OutputIterator it){
     if(repetition_count > 0)
         write_repeat(it, repetition_count); // QOI_OP_RUN
     std::copy_n("\0\0\0\0\0\0\0\1", 8, it);
+}
+
 }
