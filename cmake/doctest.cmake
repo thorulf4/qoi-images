@@ -7,7 +7,7 @@ else(doctest_FOUND)
   include(FetchContent)
   set(DOCTEST_WITH_TESTS OFF CACHE BOOL "doctest tests")
   FetchContent_Declare(doctest
-    GIT_REPOSITORY git@github.com:doctest/doctest.git
+    GIT_REPOSITORY https://github.com/doctest/doctest.git
     GIT_TAG v2.4.11
     GIT_SHALLOW ON
     GIT_PROGRESS ON
