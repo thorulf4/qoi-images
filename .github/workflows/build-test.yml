@@ -16,7 +16,7 @@ jobs:
       run: cmake -B build -DCMAKE_BUILD_TYPE=Release -DQOI_TESTING=ON
 
     - name: Build
-      run: cmake --build build --config ${{ matrix.build_type }}
+      run: cmake --build build
 
     - name: Test
       run: ctest --test-dir build
