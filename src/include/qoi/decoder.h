@@ -10,18 +10,25 @@
 #include <array>
 #include <vector>
 #include <bit>
+#include <iterator>
+#include <utility>
 
 namespace qoi {
 
-uint32_t read_int(auto& it){
-    auto data = std::array<uint8_t, 4>{*it++,*it++,*it++,*it++};
-    return __builtin_bswap32(std::bit_cast<uint32_t>(data));
+template<typename IterType, std::size_t... I>
+auto iterator_to_array(IterType& it, std::index_sequence<I...>) {
+    return std::to_array({(I, *it++)...});
+}
+
+template<typename T, typename IterType>
+T read(IterType& it){
+    return std::bit_cast<T>(iterator_to_array(it, std::make_index_sequence<sizeof(T)>{}));
 }
 
 Header read_header(auto& it){
     if(*it++ != 'q' || *it++ != 'o' || *it++ != 'i' || *it++ != 'f')
         throw std::logic_error{"Binary data must start with 'qoif' magic bytes"};
-    return {read_int(it), read_int(it), static_cast<ChannelType>(*it++), static_cast<ColorType>(*it++)};
+    return {__builtin_bswap32(read<uint32_t>(it)), __builtin_bswap32(read<uint32_t>(it)), static_cast<ChannelType>(*it++), static_cast<ColorType>(*it++)};
 }
 
 void decode_pixels(std::ranges::range auto data_range, auto output_it){
@@ -31,9 +38,9 @@ void decode_pixels(std::ranges::range auto data_range, auto output_it){
     while(input_it != std::ranges::end(data_range)){
         uint8_t flag = *input_it++;
         if(flag == 254){ // QOI_OP_RGB
-            last_pixel = RGB{*input_it++, *input_it++, *input_it++};
+            last_pixel = read<RGB>(input_it);
         }else if(flag == 255){ //QOI_OP_RGBA
-            last_pixel = RGBA{*input_it++, *input_it++, *input_it++, *input_it++,};
+            last_pixel = read<RGBA>(input_it);
         }else if(flag < 64){ // QOI_OP_INDEX
             if(flag == 0 && *input_it == 0)
                 break; // Two 0's mean we've reached the end
@@ -67,6 +74,7 @@ struct Image{
     std::vector<RGBA> pixels;
 
     template<typename IteratorType>
+    requires ( sizeof(std::iter_value_t<IteratorType>) == 1 )
     explicit Image(IteratorType start, IteratorType end) {
         header = read_header(start);
         pixels.reserve(header.width * header.height);
@@ -75,7 +83,7 @@ struct Image{
 };
 
 template<std::ranges::range DataRange>
-requires ( std::is_same_v<uint8_t, std::ranges::range_value_t<DataRange>> )
+requires ( sizeof(std::ranges::range_value_t<DataRange>) == 1 )
 Image decode(const DataRange& data_range){
     return Image{data_range.begin(), data_range.end()};
 }
