@@ -1,4 +1,4 @@
-add_library(qoi encoder.cpp decoder.cpp)
+add_library(qoi INTERFACE)
 add_library(Qoi::qoi ALIAS qoi)
 
 target_sources(qoi PUBLIC
