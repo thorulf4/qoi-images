@@ -62,3 +62,29 @@ include(FetchContent)
     endif()
 endif(Qoi_FOUND)
 ```
+
+### Full example with openCV integration
+The following example reads an qoi image and passes it into a OpenCV which saves it as a png
+```c++
+#include <qoi/core.h>
+#include <opencv2/opencv.hpp>
+
+#include <fstream>
+#include <vector>
+#include <iterator>
+#include <iostream>
+
+cv::Vec3b to_cv_pixel(const qoi::RGB& pixel){
+    return {pixel.b,pixel.g,pixel.r};
+}
+
+int main(int argc, const char** argv){
+    auto file = std::ifstream{"image.qoi", std::ios_base::binary};
+    auto image = qoi::Image{std::istreambuf_iterator{file}, {}};
+    
+    cv::Mat mat{};
+    mat.create(image.header.height, image.header.width, CV_8UC3);
+    std::transform(image.pixels.begin(), image.pixels.end(), mat.begin<cv::Vec3b>(), to_cv_pixel);
+    cv::imwrite("image.png", mat);
+}
+```
