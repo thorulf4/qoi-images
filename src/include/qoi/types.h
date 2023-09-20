@@ -25,7 +25,7 @@ struct RGB{
     static constexpr ChannelType channel = ChannelType::RGB;
     bool operator==(const RGB&) const = default;
     int hash() const {
-        return (r * 3 + g * 5 + b * 7) % 64;
+        return (r * 3 + g * 5 + b * 7 + 2805) % 64;
     }
 };
 struct RGBA : RGB{
