@@ -29,11 +29,11 @@ Header read_header(auto& it){
     return {__builtin_bswap32(read<uint32_t>(it)), __builtin_bswap32(read<uint32_t>(it)), static_cast<ChannelType>(*it++), static_cast<ColorType>(*it++)};
 }
 
-template<std::ranges::range ByteRange, typename OutputIterator>
+template<typename PixelType, std::ranges::range ByteRange, typename OutputIterator>
 requires ( sizeof(std::ranges::range_value_t<ByteRange>) == 1 )
 void decode_pixels(const ByteRange& data_range, OutputIterator output_it){
     std::array<RGBA, 64> array{};
-    RGBA last_pixel = RGBA{0, 0, 0, 255};
+    PixelType last_pixel = RGBA{0, 0, 0, 255};
     auto input_it = std::ranges::begin(data_range);
     while(input_it != std::ranges::end(data_range)){
         uint8_t flag = *input_it++;
