@@ -1,6 +1,8 @@
 #pragma once
 #include <cstdint>
 
+namespace qoi{
+
 enum class ChannelType : uint8_t {
     RGB = 3,
     RGBA = 4
@@ -34,4 +36,6 @@ struct RGBA : RGB{
     int hash() const{
         return (r * 3 + g * 5 + b * 7 + a * 11) % 64;
     }
+};
+
 };

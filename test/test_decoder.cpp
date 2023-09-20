@@ -1,4 +1,4 @@
-#include <qoi/decoder.h>
+#include <qoi/core.h>
 
 #include <array>
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
@@ -8,7 +8,7 @@ using namespace qoi;
 
 TEST_CASE("Decode header 1"){
     auto file = std::to_array<char>({ 'q', 'o', 'i', 'f', 0,0,0,0,  0,0,0,0,  4, 1});
-    Image image = decode(file);
+    auto image = TransparentImage{file};
 
     CHECK(image.header.width == 0);
     CHECK(image.header.height == 0);
@@ -19,7 +19,7 @@ TEST_CASE("Decode header 1"){
 
 TEST_CASE("Decode header 2"){
     auto file = std::to_array<uint8_t>({ 'q', 'o', 'i', 'f', 0,0,0,0,    0,0,0,0, 3, 0});
-    Image image = decode(file);
+    auto image = Image{file};
 
     CHECK(image.header.width == 0);
     CHECK(image.header.height == 0);
@@ -32,7 +32,7 @@ TEST_CASE("Decode QOI_OP_RGB"){
                         254, 100, 200, 240,
                         254, 50, 100, 200});
 
-    Image image = decode(file);
+    auto image = TransparentImage{file};
 
     CHECK(image.header.width == 2);
     CHECK(image.header.height == 1);
@@ -55,7 +55,7 @@ TEST_CASE("Decode QOI_OP_RGBA"){
                         255, 100, 200, 240, 10,
                         255, 50, 100, 200, 150});
 
-    Image image = decode(file);
+    auto image = TransparentImage{file};
 
     CHECK(image.header.width == 2);
     CHECK(image.header.height == 1);
@@ -79,7 +79,7 @@ TEST_CASE("Decode QOI_OP_INDEX"){
                         255, 255, 255, 255, 255,
                         26});
 
-    Image image = decode(file);
+    auto image = TransparentImage{file};
 
     CHECK(image.header.width == 3);
     CHECK(image.header.height == 1);
@@ -106,7 +106,7 @@ TEST_CASE("Decode QOI_OP_DIFF"){
                         254, 100, 100, 100,
                         127});
 
-    Image image = decode(file);
+    auto image = TransparentImage{file};
 
     CHECK(image.header.width == 2);
     CHECK(image.header.height == 1);
@@ -129,7 +129,7 @@ TEST_CASE("Decode QOI_OP_LUMA"){
                         254, 100, 100, 100,
                         191, 255});
 
-    Image image = decode(file);
+    auto image = TransparentImage{file};
 
     CHECK(image.header.width == 2);
     CHECK(image.header.height == 1);
@@ -152,7 +152,7 @@ TEST_CASE("Decode QOI_OP_RUN"){
                         254, 100, 100, 100,
                         194});
 
-    Image image = decode(file);
+    auto image = TransparentImage{file};
 
     CHECK(image.header.width == 2);
     CHECK(image.header.height == 2);

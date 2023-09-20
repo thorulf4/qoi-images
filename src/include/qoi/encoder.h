@@ -1,12 +1,14 @@
 #pragma once
-#include <qoi/qoi.h>
+#include "types.h"
 
+#include <cstdint>
 #include <algorithm>
 #include <cstring>
 #include <array>
-#include <bit>
 #include <ranges>
+#include <bit>
 #include <iterator>
+#include <vector>
 
 namespace qoi{
 
@@ -43,7 +45,7 @@ void encode(const Header& header, const PixelRange& pixels, OutputIterator it){
     write<std::endian::big>(it, header.height);
     *it++ = static_cast<uint8_t>(header.channels);
     *it++ = static_cast<uint8_t>(header.colorspace);
-    
+
     std::array<PixelType, 64> memory;
     constexpr static RGBA default_pixel = RGBA{0,0,0,255};
     const PixelType* last_pixel = &default_pixel;

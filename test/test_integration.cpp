@@ -1,5 +1,4 @@
-#include <qoi/encoder.h>
-#include <qoi/decoder.h>
+#include <qoi/core.h>
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include <doctest/doctest.h>
 
@@ -15,7 +14,7 @@ TEST_CASE("Integration OP_RUN"){
 
     encode({2,2, ChannelType::RGBA, ColorType::RGB}, image_data, std::back_inserter(data));
 
-    Image image = decode(data);
+    auto image = TransparentImage{data};
 
     CHECK(image.header.width == 2);
     CHECK(image.header.height == 2);
@@ -35,7 +34,7 @@ TEST_CASE("Integration OP_INDEX"){
 
     encode({2,2, ChannelType::RGBA, ColorType::RGB}, image_data, std::back_inserter(data));
 
-    Image image = decode(data);
+    auto image = TransparentImage{data};
 
     CHECK(image.header.width == 2);
     CHECK(image.header.height == 2);
@@ -55,7 +54,7 @@ TEST_CASE("Integrate with OP_DIFF"){
 
     encode({2,2, ChannelType::RGBA, ColorType::RGB}, image_data, std::back_inserter(data));
 
-    Image image = decode(data);
+    auto image = TransparentImage{data};
 
     CHECK(image.header.width == 2);
     CHECK(image.header.height == 2);
@@ -75,7 +74,7 @@ TEST_CASE("Integrate with OP_LUMA"){
 
     encode({2,2, ChannelType::RGB, ColorType::RGB}, image_data, std::back_inserter(data));
 
-    Image image = decode(data);
+    auto image = Image{data};
 
     CHECK(image.header.width == 2);
     CHECK(image.header.height == 2);

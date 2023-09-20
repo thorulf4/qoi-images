@@ -1,16 +1,14 @@
 #pragma once
-#include <qoi/qoi.h>
+#include "types.h"
 
-#include <vector>
 #include <cstdint>
-#include <ranges>
 #include <algorithm>
 #include <cstring>
-#include <stdexcept>
 #include <array>
-#include <vector>
+#include <ranges>
 #include <bit>
 #include <iterator>
+#include <vector>
 #include <utility>
 
 namespace qoi {
@@ -31,7 +29,9 @@ Header read_header(auto& it){
     return {__builtin_bswap32(read<uint32_t>(it)), __builtin_bswap32(read<uint32_t>(it)), static_cast<ChannelType>(*it++), static_cast<ColorType>(*it++)};
 }
 
-void decode_pixels(std::ranges::range auto data_range, auto output_it){
+template<std::ranges::range ByteRange, typename OutputIterator>
+requires ( sizeof(std::ranges::range_value_t<ByteRange>) == 1 )
+void decode_pixels(const ByteRange& data_range, OutputIterator output_it){
     std::array<RGBA, 64> array{};
     RGBA last_pixel = RGBA{0, 0, 0, 255};
     auto input_it = std::ranges::begin(data_range);
@@ -67,25 +67,6 @@ void decode_pixels(std::ranges::range auto data_range, auto output_it){
     }
     if(!std::equal(input_it, data_range.end(), "\0\0\0\0\0\0\1"))
         throw std::logic_error{"Input didn't contain end padding"};
-}
-
-struct Image{
-    Header header;
-    std::vector<RGBA> pixels;
-
-    template<typename IteratorType>
-    requires ( sizeof(std::iter_value_t<IteratorType>) == 1 )
-    explicit Image(IteratorType start, IteratorType end) {
-        header = read_header(start);
-        pixels.reserve(header.width * header.height);
-        decode_pixels(std::ranges::subrange(std::move(start), std::move(end)), std::back_inserter(pixels));
-    }
-};
-
-template<std::ranges::range DataRange>
-requires ( sizeof(std::ranges::range_value_t<DataRange>) == 1 )
-Image decode(const DataRange& data_range){
-    return Image{data_range.begin(), data_range.end()};
 }
 
 }

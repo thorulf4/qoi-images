@@ -6,8 +6,9 @@ target_sources(qoi PUBLIC
     TYPE HEADERS
     BASE_DIRS include
     FILES
-        include/qoi/qoi.h
+        include/qoi/core.h
         include/qoi/encoder.h
-        include/qoi/decoder.h)
+        include/qoi/decoder.h
+        include/qoi/types.h)
 
 install(TARGETS qoi EXPORT QoiConfig FILE_SET qoiPublic)
