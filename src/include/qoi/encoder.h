@@ -25,9 +25,9 @@ template<std::endian endianess = std::endian::little, class ValueType>
 void write(std::output_iterator<uint8_t> auto& it, const ValueType& value) {
     auto values = std::bit_cast<std::array<uint8_t, sizeof(ValueType)>>(value);
     if constexpr(endianess == std::endian::native)
-        std::copy_n(values.begin(), sizeof(ValueType), it);
+        it = std::copy_n(values.begin(), sizeof(ValueType), std::move(it));
     else
-        std::copy_n(values.rbegin(), sizeof(ValueType), it);
+        it = std::copy_n(values.rbegin(), sizeof(ValueType), std::move(it));
 }
 
 template<typename PixelType>

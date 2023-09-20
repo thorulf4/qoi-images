@@ -148,35 +148,43 @@ TEST_CASE("Decode QOI_OP_LUMA"){
 }
 
 TEST_CASE("Decode QOI_OP_RUN"){
-    auto file = std::to_array<uint8_t>({ 'q', 'o', 'i', 'f', 0,0,0,2,    0,0,0,2, 4, 1,
+    auto file = std::to_array<uint8_t>({ 'q', 'o', 'i', 'f', 0,0,0,2,    0,0,0,2, 3, 1,
                         254, 100, 100, 100,
                         194});
 
-    auto image = TransparentImage{file};
+    auto image = Image{file};
 
     CHECK(image.header.width == 2);
     CHECK(image.header.height == 2);
-    CHECK(image.header.channels == ChannelType::RGBA);
+    CHECK(image.header.channels == ChannelType::RGB);
     CHECK(image.header.colorspace == ColorType::RGB);
 
     CHECK(image.pixels.size() == 4);
     CHECK(image.pixels[0].r == 100);
     CHECK(image.pixels[0].g == 100);
     CHECK(image.pixels[0].b == 100);
-    CHECK(image.pixels[0].a == 255);
     
     CHECK(image.pixels[1].r == 100);
     CHECK(image.pixels[1].g == 100);
     CHECK(image.pixels[1].b == 100);
-    CHECK(image.pixels[1].a == 255);
     
     CHECK(image.pixels[2].r == 100);
     CHECK(image.pixels[2].g == 100);
     CHECK(image.pixels[2].b == 100);
-    CHECK(image.pixels[2].a == 255);
     
     CHECK(image.pixels[3].r == 100);
     CHECK(image.pixels[3].g == 100);
     CHECK(image.pixels[3].b == 100);
-    CHECK(image.pixels[3].a == 255);
+}
+
+TEST_CASE("Decode iterator to array"){
+    auto file = std::to_array<uint8_t>({0,1,2,3});
+    auto it = file.begin();
+    auto f = qoi::iterator_to_array(it, std::make_index_sequence<4>{});     
+
+    CHECK(it == file.end());
+    CHECK(f[0] == 0);
+    CHECK(f[1] == 1);
+    CHECK(f[2] == 2);
+    CHECK(f[3] == 3);               
 }

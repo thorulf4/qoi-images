@@ -36,7 +36,7 @@ TEST_CASE("Decode header 1"){
     CHECK(data[15] == 255);
     CHECK(data[16] == 255);
     CHECK(data[17] == 255);
-    
+
     CHECK(data[18] == 192);
 
     CHECK(data[19] == 0);
@@ -47,4 +47,28 @@ TEST_CASE("Decode header 1"){
     CHECK(data[24] == 0);
     CHECK(data[25] == 0);
     CHECK(data[26] == 1);
+}
+
+TEST_CASE("writer little endian"){
+    auto data = std::array<uint8_t, 4>{};
+    auto it = data.begin();
+    qoi::write<std::endian::little>(it, 32);
+
+    CHECK(it == data.end());
+    CHECK(data[0] == 32);
+    CHECK(data[1] == 0);
+    CHECK(data[2] == 0);
+    CHECK(data[3] == 0);   
+}
+
+TEST_CASE("writer big endian"){
+    auto data = std::array<uint8_t, 4>{};
+    auto it = data.begin();
+    qoi::write<std::endian::big>(it, 32);
+
+    CHECK(it == data.end());
+    CHECK(data[0] == 0);
+    CHECK(data[1] == 0);
+    CHECK(data[2] == 0);
+    CHECK(data[3] == 32);   
 }
